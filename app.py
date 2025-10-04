@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import time
-import pickle
+import joblib
 import warnings
+import xgboost
 warnings.filterwarnings('ignore')
 
 # Page configuration
@@ -86,9 +87,9 @@ if 'loan_data' not in st.session_state:
 
 
 def predict_credit_approval(data):
-    preprocessor = pickle.load(open('preprocessor.pkl','rb'))
+    preprocessor = joblib.load(open('preprocessor.pkl','rb'))
     final_data = preprocessor.transform(data)
-    model = pickle.load(open('model.pkl', 'rb'))
+    model = joblib.load(open('model.pkl', 'rb'))
     prediction = model.predict(final_data)
     confidence = model.predict_proba(final_data)[0].max() * 100
     return prediction[0], confidence
@@ -104,9 +105,9 @@ def scale_income(user_income, real_min=0, real_max=100000000, dataset_min=0, dat
 
 
 def predict_loan_approval(data):
-    preprocessor = pickle.load(open('loan_preprocessor.pkl','rb'))
+    preprocessor = joblib.load(open('loan_preprocessor.pkl','rb'))
     final_data = preprocessor.transform(data)
-    model = pickle.load(open('loan_model.pkl', 'rb'))
+    model = joblib.load(open('loan_model.pkl', 'rb'))
     prediction = model.predict(final_data)  
     confidence = model.predict_proba(final_data)[0].max() * 100
     return bool(prediction[0]), confidence
@@ -283,6 +284,23 @@ def credit_approval_page():
             
             # Show data summary
             with st.expander("View Application Summary"):
+                data = pd.DataFrame(
+                {
+                'Gender': [Gender],
+                'Age': [Age],
+                'Debt': [Debt],
+                'Married': [Married],
+                'BankCustomer': [Bank_Customer],
+                'Industry' : [Industry],
+                'YearsEmployed' : [YearsEmployed],
+                'PriorDefault' : [PriorDefault],
+                'Employed': [Employment],
+                'CreditScore': [CreditScore],
+                'DriversLicense': [DriversLicense],
+                'Citizen': [Citizen],
+                'Income': [Income]
+                }
+            )
                 st.dataframe(data.T, use_container_width=True)
 
 # Loan Approval Page
@@ -290,7 +308,7 @@ def loan_approval_page():
     st.markdown("""
     <div class="main-header">
         <h1>🏠 Loan Approval</h1>
-        <p>Check your eligibility for personal or home loans</p>
+        <p>Check your eligibility for loans</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -299,13 +317,11 @@ def loan_approval_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            loan_type = st.selectbox("Loan Type", ["Personal Loan", "Home Loan", "Auto Loan", "Business Loan", "Education Loan"])
-            loan_amount = st.number_input("Loan Amount Required ($)", min_value=1000, max_value=10000000, value=50000, step=1000)
-            loan_term = st.number_input("Loan Term (months)", min_value=6, max_value=360, value=60, step=6)
+            loan_amount = st.number_input("Loan Amount Required", min_value=1000, max_value=100000000, value=50000)
+            loan_term = st.number_input("Loan Term (months)", min_value=2, max_value=25, value=12)
         
         with col2:
-            interest_rate_type = st.selectbox("Preferred Interest Rate Type", ["Fixed", "Variable"])
-            loan_purpose = st.text_area("Loan Purpose", height=100)
+            no_of_dependents = st.number_input("Number of Dependents", min_value=0, max_value=6,value=1)
         
         st.markdown("### Personal Information")
         col1, col2 = st.columns(2)
@@ -314,72 +330,35 @@ def loan_approval_page():
             applicant_name = st.text_input("Full Name")
             gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="loan_gender")
             age = st.number_input("Age", min_value=18, max_value=100, value=35, key="loan_age")
-            marital_status = st.selectbox("Marital Status", ["Single", "Married", "Divorced", "Widowed"], key="loan_marital")
-            dependents = st.number_input("Number of Dependents", min_value=0, max_value=10, value=1, key="loan_deps")
+            education = st.selectbox("Are you Graduated?",['Yes','No'])
+            self_employed = st.selectbox("Are you Self-Employed?",['Yes','No'])
         
         with col2:
-            education = st.selectbox("Education Level", ["High School", "Bachelor's", "Master's", "PhD", "Other"], key="loan_edu")
-            employment = st.selectbox("Employment Type", ["Salaried", "Self-Employed", "Business Owner", "Freelancer"], key="loan_emp")
-            company_name = st.text_input("Company/Business Name")
-            years_employed = st.number_input("Years in Current Job", min_value=0, max_value=50, value=5, key="loan_years")
+            
+            annual_income = st.number_input("Annual Income", min_value=0, max_value=100000000, value=600000)
+            cibil_score = st.number_input("Cibil Score", min_value=300, max_value=900,value=750)
+            residential_assets_value = st.number_input("Estimated value of Residential assets", min_value=0, max_value=300000000,value=1000000)
+            commercial_assets_value = st.number_input("Estimated value of Commercial assets", min_value=0, max_value=300000000,value=1000000)
+            luxury_assets_value	= st.number_input("Estimated value of Luxury assets", min_value=0, max_value=300000000,value=1000000)
+            bank_asset_value = st.number_input("Estimated value of Bank assets", min_value=0, max_value=300000000,value=1000000)
         
-        st.markdown("### Financial Information")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            annual_income = st.number_input("Annual Income ($)", min_value=0, max_value=10000000, value=60000, step=1000)
-            co_applicant_income = st.number_input("Co-applicant Annual Income ($)", min_value=0, max_value=10000000, value=0, step=1000)
-            monthly_expenses = st.number_input("Total Monthly Expenses ($)", min_value=0, max_value=100000, value=3000, step=100, key="loan_expenses")
-            existing_emi = st.number_input("Existing Monthly EMI ($)", min_value=0, max_value=100000, value=0, step=100)
-        
-        with col2:
-            credit_score = st.number_input("Credit Score", min_value=300, max_value=850, value=700, step=10)
-            bank_balance = st.number_input("Current Bank Balance ($)", min_value=0, max_value=10000000, value=10000, step=100)
-            collateral_value = st.number_input("Collateral Value ($)", min_value=0, max_value=10000000, value=0, step=1000)
-            guarantor = st.selectbox("Guarantor Available", ["Yes", "No"])
-        
-        st.markdown("### Assets & Liabilities")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            property_owned = st.selectbox("Number of Properties Owned", [0, 1, 2, 3, "4+"])
-            vehicle_owned = st.selectbox("Number of Vehicles Owned", [0, 1, 2, 3, "4+"])
-            investments = st.number_input("Total Investment Value ($)", min_value=0, max_value=10000000, value=5000, step=500)
-        
-        with col2:
-            credit_cards = st.number_input("Number of Credit Cards", min_value=0, max_value=20, value=2)
-            credit_card_debt = st.number_input("Total Credit Card Debt ($)", min_value=0, max_value=1000000, value=1000, step=100)
-            other_loans = st.number_input("Other Loan Amount ($)", min_value=0, max_value=10000000, value=0, step=1000)
         
         submitted = st.form_submit_button("Submit Loan Application")
         
         if submitted:
             # Create DataFrame from form data
             data = pd.DataFrame({
-                'loan_type': [loan_type],
+                'no_of_dependents': [no_of_dependents],
+                'education': [1 if education == 'Yes' else 0],
+                'self_employed': [1 if self_employed == 'Yes' else 0],
+                'annual_income': [annual_income],
                 'loan_amount': [loan_amount],
                 'loan_term': [loan_term],
-                'gender': [1 if gender == "Male" else 0],
-                'age': [age],
-                'marital_status': [marital_status],
-                'dependents': [dependents],
-                'education': [education],
-                'employment': [employment],
-                'years_employed': [years_employed],
-                'annual_income': [annual_income],
-                'co_applicant_income': [co_applicant_income],
-                'monthly_expenses': [monthly_expenses],
-                'existing_emi': [existing_emi],
-                'credit_score': [credit_score],
-                'bank_balance': [bank_balance],
-                'collateral_value': [collateral_value],
-                'guarantor': [1 if guarantor == "Yes" else 0],
-                'property_owned': [property_owned if isinstance(property_owned, int) else 4],
-                'vehicle_owned': [vehicle_owned if isinstance(vehicle_owned, int) else 4],
-                'investments': [investments],
-                'credit_cards': [credit_cards],
-                'credit_card_debt': [credit_card_debt],
-                'other_loans': [other_loans]
+                'cibil_score': [cibil_score],
+                'residential_assets_value': [residential_assets_value],
+                'commercial_assets_value': [commercial_assets_value],
+                'luxury_assets_value': [luxury_assets_value],
+                'bank_asset_value': [bank_asset_value]
             })
             
             st.session_state.loan_data = data
@@ -389,12 +368,12 @@ def loan_approval_page():
                 time.sleep(2)
             
             # Get prediction
-            approved, confidence, amount_approved = predict_loan_approval(data)
+            approved, confidence = predict_loan_approval(data)
             
             # Calculate EMI
             if approved:
-                rate = 0.08 / 12  # Monthly interest rate (assuming 8% annual)
-                emi = (amount_approved * rate * (1 + rate)**loan_term) / ((1 + rate)**loan_term - 1)
+                rate = 0.08 / 12  
+                emi = (loan_amount * rate * (1 + rate)**loan_term) / ((1 + rate)**loan_term - 1)
             
             # Display results
             st.markdown("---")
@@ -405,10 +384,9 @@ def loan_approval_page():
                 <div class="success-box">
                     <h2>✅ Great News! Your Loan Application is APPROVED</h2>
                     <p><strong>Confidence Score:</strong> {confidence:.1f}%</p>
-                    <p><strong>Approved Loan Amount:</strong> ${amount_approved:,.2f}</p>
-                    <p><strong>Estimated Monthly EMI:</strong> ${emi:,.2f}</p>
-                    <p><strong>Interest Rate:</strong> 8% p.a. (subject to final verification)</p>
-                    <p>Our loan officer will contact you within 48 hours to proceed with documentation.</p>
+                    <p><strong>Approved Loan Amount:</strong> ₹{loan_amount:,.2f}</p>
+                    <p><strong>Estimated Monthly EMI:</strong> ₹{emi:,.2f}</p>
+                    <p><strong>Interest Rate:</strong> 8% p.a. </p>
                 </div>
                 """, unsafe_allow_html=True)
                 st.balloons()
@@ -416,11 +394,11 @@ def loan_approval_page():
                 # Loan details breakdown
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    st.metric("Loan Amount", f"${amount_approved:,.0f}")
+                    st.metric("Loan Amount", f"₹{loan_amount:,.0f}")
                 with col2:
-                    st.metric("Monthly EMI", f"${emi:,.0f}")
+                    st.metric("Monthly EMI", f"₹{emi:,.0f}")
                 with col3:
-                    st.metric("Total Interest", f"${(emi * loan_term - amount_approved):,.0f}")
+                    st.metric("Total Interest", f"₹{(emi * loan_term - loan_amount):,.0f}")
             else:
                 st.markdown(f"""
                 <div class="danger-box">
@@ -493,7 +471,7 @@ def main():
     
     # Sidebar Navigation
     with st.sidebar:
-        st.image("https://via.placeholder.com/150x50/667eea/ffffff?text=Approv.io", use_column_width=True)
+        st.image("https://via.placeholder.com/150x50/667eea/ffffff?text=Approv.io", use_container_width=True)
         st.markdown("---")
         
         menu_options = ["Home", "Credit Approval", "Loan Approval", "Dashboard", "About"]
@@ -503,7 +481,7 @@ def main():
         st.markdown("---")
         st.markdown("### 📞 Contact Support")
         st.markdown("Email: support@approv.io")
-        st.markdown("Phone: 1-800-APPROVE")
+        st.markdown("Phone: 1-800-900-1")
         
         st.markdown("---")
         st.markdown("### 🔒 Security")
