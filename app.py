@@ -471,7 +471,7 @@ def main():
     
     # Sidebar Navigation
     with st.sidebar:
-        st.image("https://via.placeholder.com/150x50/667eea/ffffff?text=Approv.io", width='stretch')
+        st.image("logo.png", width='stretch')
         st.markdown("---")
         
         menu_options = ["Home", "Credit Approval", "Loan Approval", "Dashboard", "About"]
