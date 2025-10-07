@@ -236,13 +236,13 @@ def credit_approval_page():
                 'Married': [1 if Married == 'Married' else 0],
                 'BankCustomer': [1 if Bank_Customer == 'Yes' else 0],
                 'Industry' : [Industry],
-                'YearsEmployed' : [YearsEmployed],
+                'YearsEmployed' : [np.log1p(YearsEmployed)],
                 'PriorDefault' : [1 if PriorDefault == 'Yes' else 0],
                 'Employed': [1 if Employment == 'Yes' else 0],
-                'CreditScore': [scale_credit_score(CreditScore)],
+                'CreditScore': [np.log1p(scale_credit_score(CreditScore))],
                 'DriversLicense': [1 if DriversLicense == 'Yes' else 0],
                 'Citizen': [Citizen],
-                'Income': [scale_income(Income)]
+                'Income': [np.log1p(scale_income(Income))]
                 }
             )
             
