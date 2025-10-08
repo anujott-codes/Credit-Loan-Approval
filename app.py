@@ -9,7 +9,7 @@ import xgboost
 warnings.filterwarnings('ignore')
 import shap 
 import matplotlib.pyplot as plt
-from streamlit.components.v1 import html
+
 
 shap.initjs()
 
