@@ -9,6 +9,7 @@ import xgboost
 warnings.filterwarnings('ignore')
 import shap 
 import matplotlib.pyplot as plt
+from streamlit.components.v1 import html
 
 shap.initjs()
 
@@ -123,14 +124,25 @@ def get_loan_explaination(data):
 
     sample = pd.DataFrame(final_data,columns=feature_names)
     explainer = joblib.load(open('loan_explainer.pkl','rb'))
+    shap_values = explainer(sample)
+    return shap_values
+
+def get_loan_top_features(data):
+    preprocessor = joblib.load(open('loan_preprocessor.pkl','rb'))
+    final_data = preprocessor.transform(data)
+    feature_names = preprocessor.get_feature_names_out()
+
+    sample = pd.DataFrame(final_data,columns=feature_names)
+    explainer = joblib.load(open('loan_explainer.pkl','rb'))
     shap_values = explainer.shap_values(sample)
-    st_shap = shap.force_plot(
-        explainer.expected_value, 
-        shap_values, 
-        sample,
-        matplotlib=True
-    )
-    return st_shap
+
+    feature_importance = pd.DataFrame({
+        'Feature': sample.columns,
+        'Feature Value': shap_values[0]
+    }).sort_values(by='SHAP Value', key=abs, ascending=False)
+
+    return feature_importance
+     
 
 # Home Page
 def home_page():
@@ -421,8 +433,16 @@ def loan_approval_page():
                     st.metric("Total Interest", f"₹{(emi * loan_term - loan_amount):,.0f}")
                 
                 st.subheader("Model Explanation for this Prediction")
-                plot = get_loan_explaination(data)
-                st.pyplot(plot)
+                values = get_loan_explaination(data)
+                plt.figure()
+                shap.plots.bar(values)
+                st.pyplot(plt)
+
+                st.subheader("Top Factors:")
+                feature_importance = get_loan_top_features(data)
+                top_features = feature_importance.head(5)
+                st.table(top_features)
+
             else:
                 st.markdown(f"""
                 <div class="danger-box">
@@ -445,9 +465,18 @@ def loan_approval_page():
                 """, unsafe_allow_html=True)
 
                 st.subheader("Model Explanation for this Prediction")
-                plot = get_loan_explaination(data)
-                st.pyplot(plot)
-            
+                values = get_loan_explaination(data)
+                plt.figure()
+                shap.plots.bar(values)
+                st.pyplot(plt)
+
+                st.subheader("Top Factors:")
+                feature_importance = get_loan_top_features(data)
+                top_features = feature_importance.head(5)
+                st.table(top_features)
+
+                
+
             # Show data summary
             with st.expander("View Complete Application Data"):
                 st.dataframe(data.T, use_container_width=True)
