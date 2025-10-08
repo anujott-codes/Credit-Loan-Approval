@@ -7,6 +7,10 @@ import joblib
 import warnings
 import xgboost
 warnings.filterwarnings('ignore')
+import shap 
+import matplotlib.pyplot as plt
+
+shap.initjs()
 
 # Page configuration
 st.set_page_config(
@@ -111,6 +115,22 @@ def predict_loan_approval(data):
     prediction = model.predict(final_data)  
     confidence = model.predict_proba(final_data)[0].max() * 100
     return bool(prediction[0]), confidence
+
+def get_loan_explaination(data):
+    preprocessor = joblib.load(open('loan_preprocessor.pkl','rb'))
+    final_data = preprocessor.transform(data)
+    feature_names = preprocessor.get_feature_names_out()
+
+    sample = pd.DataFrame(final_data,columns=feature_names)
+    explainer = joblib.load(open('loan_explainer.pkl','rb'))
+    shap_values = explainer.shap_values(sample)
+    st_shap = shap.force_plot(
+        explainer.expected_value, 
+        shap_values, 
+        sample,
+        matplotlib=True
+    )
+    return st_shap
 
 # Home Page
 def home_page():
@@ -399,6 +419,10 @@ def loan_approval_page():
                     st.metric("Monthly EMI", f"₹{emi:,.0f}")
                 with col3:
                     st.metric("Total Interest", f"₹{(emi * loan_term - loan_amount):,.0f}")
+                
+                st.subheader("Model Explanation for this Prediction")
+                plot = get_loan_explaination(data)
+                st.pyplot(plot)
             else:
                 st.markdown(f"""
                 <div class="danger-box">
@@ -419,6 +443,10 @@ def loan_approval_page():
                     </ul>
                 </div>
                 """, unsafe_allow_html=True)
+
+                st.subheader("Model Explanation for this Prediction")
+                plot = get_loan_explaination(data)
+                st.pyplot(plot)
             
             # Show data summary
             with st.expander("View Complete Application Data"):
