@@ -276,7 +276,7 @@ def credit_approval_page():
             Bank_Customer = st.selectbox("Do you have a bank account?", ['Yes','No'])
         
         with col2:
-            PriorDefault = st.selectbox("Any PriorDefault",['Yes','No'])
+            PriorDefault = st.selectbox("Any PriorDefault",['No','Yes'])
             CreditScore = st.number_input("Credit Score",min_value=300,max_value=900,value=750)
             DriversLicense = st.selectbox('Do you have a drivers license',['Yes','No'])
             
@@ -294,7 +294,7 @@ def credit_approval_page():
                 'BankCustomer': [1 if Bank_Customer == 'Yes' else 0],
                 'Industry' : [Industry],
                 'YearsEmployed' : [np.log1p(YearsEmployed)],
-                'PriorDefault' : [1 if PriorDefault == 'No' else 0],
+                'PriorDefault' : [1 if PriorDefault == 'Yes' else 0],
                 'Employed': [1 if Employment == 'Yes' else 0],
                 'CreditScore': [np.log1p(scale_credit_score(CreditScore))],
                 'DriversLicense': [1 if DriversLicense == 'Yes' else 0],
@@ -404,7 +404,6 @@ def loan_approval_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            applicant_name = st.text_input("Full Name")
             gender = st.selectbox("Gender", ["Male", "Female", "Other"], key="loan_gender")
             age = st.number_input("Age", min_value=18, max_value=100, value=35, key="loan_age")
             education = st.selectbox("Are you Graduated?",['Yes','No'])
