@@ -139,7 +139,7 @@ def get_loan_top_features(data):
     feature_importance = pd.DataFrame({
         'Feature': sample.columns,
         'Feature Value': shap_values[0]
-    }).sort_values(by='SHAP Value', key=abs, ascending=False)
+    }).sort_values(by='Feature Value', key=abs, ascending=False)
 
     return feature_importance
      
@@ -165,7 +165,7 @@ def get_credit_top_features(data):
     feature_importance = pd.DataFrame({
         'Feature': sample.columns,
         'Feature Value': shap_values[0]
-    }).sort_values(by='SHAP Value', key=abs, ascending=False)
+    }).sort_values(by='Feature Value', key=abs, ascending=False)
 
     return feature_importance
 
