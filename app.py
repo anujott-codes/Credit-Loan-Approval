@@ -143,6 +143,31 @@ def get_loan_top_features(data):
 
     return feature_importance
      
+def get_credit_explaination(data):
+    preprocessor = joblib.load(open('preprocessor.pkl','rb'))
+    final_data = preprocessor.transform(data)
+    feature_names = preprocessor.get_feature_names_out()
+
+    sample = pd.DataFrame(final_data,columns=feature_names)
+    explainer = joblib.load(open('credit_explainer.pkl','rb'))
+    shap_values = explainer(sample)
+    return shap_values
+
+def get_credit_top_features(data):
+    preprocessor = joblib.load(open('preprocessor.pkl','rb'))
+    final_data = preprocessor.transform(data)
+    feature_names = preprocessor.get_feature_names_out()
+
+    sample = pd.DataFrame(final_data,columns=feature_names)
+    explainer = joblib.load(open('credit_explainer.pkl','rb'))
+    shap_values = explainer.shap_values(sample)
+
+    feature_importance = pd.DataFrame({
+        'Feature': sample.columns,
+        'Feature Value': shap_values[0]
+    }).sort_values(by='SHAP Value', key=abs, ascending=False)
+
+    return feature_importance
 
 # Home Page
 def home_page():
@@ -295,15 +320,24 @@ def credit_approval_page():
                 st.markdown(f"""
                 <div class="success-box">
                     <h2>✅ Congratulations! Your Credit Card Application is APPROVED</h2>
-                    <p><strong>Confidence Score:</strong> {confidence:.1f}%</p>
                 </div>
                 """, unsafe_allow_html=True)
                 st.balloons()
+
+                st.subheader("Model Explanation for this Prediction")
+                values = get_credit_explaination(data)
+                plt.figure()
+                shap.plots.bar(values)
+                st.pyplot(plt)
+
+                st.subheader("Top Factors:")
+                feature_importance = get_credit_top_features(data)
+                top_features = feature_importance.head(5)
+                st.table(top_features)
             else:
                 st.markdown(f"""
                 <div class="danger-box">
                     <h2>❌ Unfortunately, Your Credit Card Application was Not Approved</h2>
-                    <p><strong>Confidence Score:</strong> {confidence:.1f}%</p>
                     <p><strong>Suggestions for Improvement:</strong></p>
                     <ul>
                         <li>Improve your credit history</li>
@@ -313,6 +347,17 @@ def credit_approval_page():
                     </ul>
                 </div>
                 """, unsafe_allow_html=True)
+
+                st.subheader("Model Explanation for this Prediction")
+                values = get_credit_explaination(data)
+                plt.figure()
+                shap.plots.bar(values)
+                st.pyplot(plt)
+
+                st.subheader("Top Factors:")
+                feature_importance = get_credit_top_features(data)
+                top_features = feature_importance.head(5)
+                st.table(top_features)
             
             # Show data summary
             with st.expander("View Application Summary"):
