@@ -294,7 +294,7 @@ def credit_approval_page():
                 'BankCustomer': [1 if Bank_Customer == 'Yes' else 0],
                 'Industry' : [Industry],
                 'YearsEmployed' : [np.log1p(YearsEmployed)],
-                'PriorDefault' : [1 if PriorDefault == 'Yes' else 0],
+                'PriorDefault' : [1 if PriorDefault == 'No' else 0],
                 'Employed': [1 if Employment == 'Yes' else 0],
                 'CreditScore': [np.log1p(scale_credit_score(CreditScore))],
                 'DriversLicense': [1 if DriversLicense == 'Yes' else 0],
