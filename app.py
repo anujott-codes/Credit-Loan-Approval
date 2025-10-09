@@ -294,7 +294,7 @@ def credit_approval_page():
                 'BankCustomer': [1 if Bank_Customer == 'Yes' else 0],
                 'Industry' : [Industry],
                 'YearsEmployed' : [np.log1p(YearsEmployed)],
-                'PriorDefault' : [1 if PriorDefault == 'Yes' else 0],
+                'PriorDefault' : [1 if PriorDefault == 'No' else 0],
                 'Employed': [1 if Employment == 'Yes' else 0],
                 'CreditScore': [np.log1p(scale_credit_score(CreditScore))],
                 'DriversLicense': [1 if DriversLicense == 'Yes' else 0],
@@ -378,7 +378,7 @@ def credit_approval_page():
                 'Income': [Income]
                 }
             )
-                st.dataframe(data.T, use_container_width=True)
+                st.dataframe(data.T, width='stretch')
 
 # Loan Approval Page
 def loan_approval_page():
@@ -524,7 +524,7 @@ def loan_approval_page():
 
             # Show data summary
             with st.expander("View Complete Application Data"):
-                st.dataframe(data.T, use_container_width=True)
+                st.dataframe(data.T, width='stretch')
 
 # Dashboard Page
 def dashboard_page():
@@ -540,7 +540,7 @@ def dashboard_page():
     with tab1:
         if st.session_state.credit_data is not None:
             st.markdown("### Latest Credit Card Application")
-            st.dataframe(st.session_state.credit_data, use_container_width=True)
+            st.dataframe(st.session_state.credit_data, width='stretch')
             
             col1, col2, col3 = st.columns(3)
             with col1:
@@ -555,7 +555,7 @@ def dashboard_page():
     with tab2:
         if st.session_state.loan_data is not None:
             st.markdown("### Latest Loan Application")
-            st.dataframe(st.session_state.loan_data, use_container_width=True)
+            st.dataframe(st.session_state.loan_data, width='stretch')
             
             col1, col2, col3 = st.columns(3)
             with col1:
