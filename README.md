@@ -21,12 +21,14 @@ This creates a need for an **automated, data-driven, and transparent solution** 
 
 ## 💡 Solution – Introducing Approv.io
 
-**Approv.io** is an **end-to-end machine learning solution** that automates credit and loan approvals. By leveraging **Support Vector Classifier (SVC)** for credit approval and **XGBoost** for loan approval, Approv.io provides:
+**Approv.io** is an **end-to-end machine learning solution** that automates credit and loan approvals. By leveraging the **XGBoost Classifier** for both credit and loan approvals and integrating **SHAP-based explainability**, Approv.io ensures that every decision is **data-driven, fast, and transparent**.
 
-* **Instant Predictions** – Applicants get real-time results.
-* **Data-Driven Decisions** – Models trained on real-world datasets ensure consistency.
-* **Transparency** – Clear output with the option to extend into explainable AI.
-* **User-Friendly Interface** – Built with Streamlit, the platform is intuitive and accessible.
+**Key Highlights:**
+
+* **Instant Predictions** – Applicants get real-time approval results.
+* **Data-Driven Decisions** – Trained on real-world datasets to ensure accuracy and fairness.
+* **Explainable AI (SHAP)** – Provides interpretability into how features affect predictions.
+* **User-Friendly Interface** – Built with Streamlit for simplicity and accessibility.
 
 In short, Approv.io bridges the gap between applicants and financial institutions by making approvals **faster, fairer, and more reliable**.
 
@@ -34,12 +36,9 @@ In short, Approv.io bridges the gap between applicants and financial institution
 
 ## 📌 Overview
 
-**Approv.io** is a complete end-to-end machine learning project designed to automate **Credit Approval** and **Loan Approval** decisions. The app leverages two trained ML models:
+**Approv.io** is a complete end-to-end ML project designed to automate **Credit Approval** and **Loan Approval** processes using **XGBoost models** for both systems.
 
-* **Credit Approval Model** – Support Vector Classifier (**SVC**)
-* **Loan Approval Model** – Extreme Gradient Boosting (**XGBoost**)
-
-The platform provides an intuitive web interface where users can input relevant financial details and instantly receive predictions regarding their credit/loan application outcomes.
+The platform provides an intuitive web interface where users can input relevant financial details and instantly receive predictions along with **model explainability insights (via SHAP plots)**.
 
 ---
 
@@ -47,8 +46,9 @@ The platform provides an intuitive web interface where users can input relevant 
 
 * Automate decision-making for credit and loan approvals.
 * Provide fast, reliable ML predictions.
+* Deliver model transparency with SHAP-based interpretability.
 * Demonstrate a **production-ready ML pipeline** deployed on the cloud.
-* Deliver an interactive UI using **Streamlit** for a seamless user experience.
+* Offer a seamless user experience with **Streamlit UI**.
 
 ---
 
@@ -62,17 +62,21 @@ The platform provides an intuitive web interface where users can input relevant 
 
 * **Machine Learning:**
 
-  * `scikit-learn` – Training SVC model for credit approval
-  * `xgboost` – Training gradient boosting model for loan approval
+  * `xgboost` – Training gradient boosting models for both credit and loan approvals
+  * `scikit-learn` – Preprocessing, metrics, and pipeline support
+  * `shap` – Explainable AI (SHAP value visualizations)
   * `joblib` – Model serialization
+
 * **Data Analysis & Processing:**
 
   * `pandas` – Data manipulation
   * `numpy` – Numerical computations
+
 * **Visualization:**
 
   * `matplotlib`
   * `seaborn`
+
 * **Web Application:**
 
   * `streamlit` – Interactive UI and deployment
@@ -90,21 +94,24 @@ The platform provides an intuitive web interface where users can input relevant 
 
 ## 📊 Features
 
-### 1. **Credit Approval System (SVC Model)**
+### 1. **Credit Approval System (XGBoost Model)**
 
 * **Inputs:** Gender, Age, Debt, Married, BankCustomer, Industry, YearsEmployed, PriorDefault, Employed, CreditScore, Income, Citizen, DriversLicense
-* **Model:** Support Vector Classifier (SVC)
+* **Model:** XGBoost Classifier
 * **Output:** Approved / Rejected decision
+* **Explainability:** SHAP summary and force plots for transparency
 
 ### 2. **Loan Approval System (XGBoost Model)**
 
 * **Inputs:** loan_id, no_of_dependents, education, self_employed, income_annum, loan_amount, loan_term, cibil_score, residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value, loan_status
 * **Model:** XGBoost Classifier
 * **Output:** Approved / Rejected decision + EMI calculation (if approved)
+* **Explainability:** SHAP plots to visualize feature importance for each prediction
 
 ### 3. **Dashboard**
 
-* Displays previous applications & their results (simulated dataset + session data).
+* Displays previous application results (simulated dataset + session data).
+* Visual analytics for overall trends.
 
 ### 4. **User Interface**
 
@@ -122,16 +129,21 @@ The platform provides an intuitive web interface where users can input relevant 
 
 2. **Model Training**
 
-   * **Credit Approval:** Trained with `SVC`
+   * **Credit Approval:** Trained with `XGBClassifier`
    * **Loan Approval:** Trained with `XGBClassifier`
 
-3. **Evaluation Metrics**
+3. **Explainable AI Integration**
+
+   * SHAP explainer integrated into both models
+   * Force plots and summary plots to interpret model predictions
+
+4. **Evaluation Metrics**
 
    * Accuracy
    * Precision, Recall, F1-Score
    * Confusion Matrix
 
-4. **Model Storage**
+5. **Model Storage**
 
    * Trained models saved as `.pkl` files with `joblib`
 
@@ -141,8 +153,9 @@ The platform provides an intuitive web interface where users can input relevant 
 
 1. Model training in Google Colab → export `.pkl` models
 2. App development in **Streamlit** with modular pages
-3. Dependency management with `requirements.txt`
-4. Deployment to **Streamlit Community Cloud**
+3. Integration of SHAP for explainability visualizations
+4. Dependency management with `requirements.txt`
+5. Deployment to **Streamlit Community Cloud**
 
 ---
 
@@ -150,16 +163,16 @@ The platform provides an intuitive web interface where users can input relevant 
 
 * Static ML models (no live retraining yet)
 * User data stored only in session (not persistent)
-* Limited interpretability (future integration of SHAP planned)
+* SHAP visualizations may be computationally intensive for large datasets
 
 ---
 
 ## 📅 Future Improvements
 
-* Add **Explainable AI (SHAP values)** for transparency
 * Integrate real-time database (PostgreSQL / Firebase)
 * Implement authentication for personalized dashboards
-* Expand to other financial services (e.g., insurance approvals)
+* Expand into other financial services (e.g., insurance approvals)
+* Add API endpoints for third-party integration
 
 ---
 
@@ -176,7 +189,7 @@ The platform provides an intuitive web interface where users can input relevant 
 
   * Credit dataset: [Kaggle – Credit Card Approval Data](https://www.kaggle.com/datasets/samuelcortinhas/credit-card-approval-clean-data)
   * Loan dataset: [Kaggle – Loan Approval Prediction Data](https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset)
-* **Libraries:** scikit-learn, xgboost, pandas, numpy
+* **Libraries:** scikit-learn, xgboost, shap, pandas, numpy
 * **Deployment:** [Streamlit Documentation](https://docs.streamlit.io/)
 
 ---
