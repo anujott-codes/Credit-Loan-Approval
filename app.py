@@ -11,7 +11,6 @@ import shap
 import matplotlib.pyplot as plt
 
 
-shap.initjs()
 
 # Page configuration
 st.set_page_config(
