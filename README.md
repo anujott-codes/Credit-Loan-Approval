@@ -1,6 +1,17 @@
 # Approv.io – Credit & Loan Approval System
 
-**Live App:** [https://approvio.streamlit.app/](https://approvio.streamlit.app/)
+**Approv.io** is an intelligent, data-driven platform designed to automate and streamline credit and loan approval processes. It leverages advanced machine learning models to provide instant, fair, and explainable decisions.
+
+---
+
+## 🚀 Versions
+
+### **Version 2: Enterprise Web Platform (Latest)**
+A modern, full-stack web application featuring a premium React frontend and a robust FastAPI backend. Designed for scalability, user experience, and enterprise-grade performance.
+
+### **Version 1: Streamlit Prototype (Legacy)**
+The initial proof-of-concept built entirely in Python using Streamlit.
+**🔴 Live Demo (v1):** [https://approvio.streamlit.app/](https://approvio.streamlit.app/)
 
 ---
 
@@ -9,170 +20,120 @@
 In today’s financial ecosystem, **credit and loan approvals** are often time-consuming, subjective, and prone to human bias. Applicants face long waiting times, and financial institutions struggle with high application volumes, inconsistent evaluation methods, and the risk of default due to poor decision-making.
 
 Key challenges include:
-
 * Manual verification delays
 * Inconsistent approval criteria across institutions
 * Risk of errors and bias in decision-making
 * Limited transparency for applicants
 
-This creates a need for an **automated, data-driven, and transparent solution** to streamline financial approval systems.
+This creates a need for an **automated, data-driven, and transparent solution**.
 
 ---
 
-## 💡 Solution – Introducing Approv.io
+## 💡 Solution
 
-**Approv.io** is an **end-to-end machine learning solution** that automates credit and loan approvals. By leveraging the **XGBoost Classifier** for both credit and loan approvals and integrating **SHAP-based explainability**, Approv.io ensures that every decision is **data-driven, fast, and transparent**.
+**Approv.io** bridges the gap between applicants and financial institutions by making approvals **faster, fairer, and more reliable**.
 
-**Key Highlights:**
-
-* **Instant Predictions** – Applicants get real-time approval results.
-* **Data-Driven Decisions** – Trained on real-world datasets to ensure accuracy and fairness.
-* **Explainable AI (SHAP)** – Provides interpretability into how features affect predictions.
-* **User-Friendly Interface** – Built with Streamlit for simplicity and accessibility.
-
-In short, Approv.io bridges the gap between applicants and financial institutions by making approvals **faster, fairer, and more reliable**.
+*   **Instant Predictions:** Real-time approval status based on ML models.
+*   **Explainable AI (SHAP):** Understand *why* a decision was made with feature importance insights.
+*   **Data-Driven:** Trained on real-world datasets (XGBoost Classifier).
 
 ---
 
-## 📌 Overview
+## 🌟 Version 2: Enterprise Web Platform
 
-**Approv.io** is a complete end-to-end ML project designed to automate **Credit Approval** and **Loan Approval** processes using **XGBoost models** for both systems.
+The latest version of Approv.io transforms the prototype into a production-ready web application.
 
-The platform provides an intuitive web interface where users can input relevant financial details and instantly receive predictions along with **model explainability insights (via SHAP plots)**.
+### 🛠️ Tech Stack (v2)
 
----
+*   **Frontend:** React, Vite, TailwindCSS, Framer Motion, Lucide React
+*   **Backend:** FastAPI, Uvicorn, Python 3.12
+*   **ML Engine:** XGBoost, Scikit-learn, SHAP, Pandas, NumPy
 
-## 🎯 Objectives
+### ✨ Key Features (v2)
 
-* Automate decision-making for credit and loan approvals.
-* Provide fast, reliable ML predictions.
-* Deliver model transparency with SHAP-based interpretability.
-* Demonstrate a **production-ready ML pipeline** deployed on the cloud.
-* Offer a seamless user experience with **Streamlit UI**.
+*   **Premium UI/UX:** A sleek, responsive interface with smooth animations and glassmorphism effects.
+*   **REST API Architecture:** Decoupled frontend and backend for scalability.
+*   **Interactive Dashboards:** Dynamic result cards with color-coded indicators and confidence scores.
+*   **Real-time EMI Calculator:** Instantly estimates monthly payments for approved loans.
+*   **Detailed Explanations:** Visual breakdown of key favorable and unfavorable factors.
 
----
+### 💻 How to Run Version 2 Locally
 
-## ⚙️ Tech Stack
+Follow these steps to set up the project on your local machine.
 
-### 🔹 Programming Languages
+#### Prerequisites
+*   Python 3.12+
+*   Node.js 16+
 
-* **Python 3.12** – Core development language
+#### 1. Backend Setup (FastAPI)
 
-### 🔹 Libraries & Frameworks
+The backend serves the ML models and API endpoints.
 
-* **Machine Learning:**
+```bash
+# Navigate to the project root
+cd /path/to/project
 
-  * `xgboost` – Training gradient boosting models for both credit and loan approvals
-  * `scikit-learn` – Preprocessing, metrics, and pipeline support
-  * `shap` – Explainable AI (SHAP value visualizations)
-  * `joblib` – Model serialization
+# Activate the virtual environment (if not already active)
+source venv/bin/activate  # On macOS/Linux
+# .\venv\Scripts\activate # On Windows
 
-* **Data Analysis & Processing:**
+# Install dependencies (if needed)
+pip install -r requirements.txt
+pip install fastapi uvicorn python-multipart
 
-  * `pandas` – Data manipulation
-  * `numpy` – Numerical computations
+# Start the API server
+python api.py
+```
+*The backend will start on `http://localhost:8000`*
 
-* **Visualization:**
+#### 2. Frontend Setup (React)
 
-  * `matplotlib`
-  * `seaborn`
+The frontend provides the user interface.
 
-* **Web Application:**
+```bash
+# Open a new terminal and navigate to the frontend directory
+cd frontend
 
-  * `streamlit` – Interactive UI and deployment
+# Install dependencies
+npm install
 
-### 🔹 Deployment
-
-* **Platform:** Streamlit Community Cloud
-* **App URL:** [https://approvio.streamlit.app/](https://approvio.streamlit.app/)
-* **Environment:**
-
-  * `requirements.txt` includes all dependencies
-  * Models pre-trained in **Google Colab** and saved as `.pkl` files
-
----
-
-## 📊 Features
-
-### 1. **Credit Approval System (XGBoost Model)**
-
-* **Inputs:** Gender, Age, Debt, Married, BankCustomer, Industry, YearsEmployed, PriorDefault, Employed, CreditScore, Income, Citizen, DriversLicense
-* **Model:** XGBoost Classifier
-* **Output:** Approved / Rejected decision
-* **Explainability:** SHAP summary and force plots for transparency
-
-### 2. **Loan Approval System (XGBoost Model)**
-
-* **Inputs:** loan_id, no_of_dependents, education, self_employed, income_annum, loan_amount, loan_term, cibil_score, residential_assets_value, commercial_assets_value, luxury_assets_value, bank_asset_value, loan_status
-* **Model:** XGBoost Classifier
-* **Output:** Approved / Rejected decision + EMI calculation (if approved)
-* **Explainability:** SHAP plots to visualize feature importance for each prediction
-
-### 3. **Dashboard**
-
-* Displays previous application results (simulated dataset + session data).
-* Visual analytics for overall trends.
-
-### 4. **User Interface**
-
-* Sidebar navigation (Home, Credit Approval, Loan Approval, Dashboard, About).
-* Clean design with structured forms for user input.
+# Start the development server
+npm run dev
+```
+*The frontend will start on `http://localhost:5173`*
 
 ---
 
-## 📈 Machine Learning Pipeline
+## 🧪 Version 1: Streamlit Prototype
 
-1. **Data Preprocessing**
+The original prototype demonstrating the core ML capabilities.
 
-   * Encoding categorical variables (`OneHotEncoder`)
-   * Feature scaling (`StandardScaler`)
+### 🛠️ Tech Stack (v1)
+*   **Language:** Python 3.12
+*   **Framework:** Streamlit
+*   **ML Libraries:** XGBoost, Scikit-learn, SHAP
 
-2. **Model Training**
-
-   * **Credit Approval:** Trained with `XGBClassifier`
-   * **Loan Approval:** Trained with `XGBClassifier`
-
-3. **Explainable AI Integration**
-
-   * SHAP explainer integrated into both models
-   * Force plots and summary plots to interpret model predictions
-
-4. **Evaluation Metrics**
-
-   * Accuracy
-   * Precision, Recall, F1-Score
-   * Confusion Matrix
-
-5. **Model Storage**
-
-   * Trained models saved as `.pkl` files with `joblib`
+### 📊 Features (v1)
+*   **Credit Approval:** Predicts credit card eligibility based on financial history.
+*   **Loan Approval:** Evaluates loan applications and calculates EMI.
+*   **Dashboard:** Visual analytics of historical application trends.
+*   **Sidebar Navigation:** Simple access to different modules.
 
 ---
 
-## 🚀 Deployment Process
+## 📈 Machine Learning Pipeline (Shared)
 
-1. Model training in Google Colab → export `.pkl` models
-2. App development in **Streamlit** with modular pages
-3. Integration of SHAP for explainability visualizations
-4. Dependency management with `requirements.txt`
-5. Deployment to **Streamlit Community Cloud**
+Both versions rely on the same robust ML core:
 
----
-
-## 🔐 Security & Limitations
-
-* Static ML models (no live retraining yet)
-* User data stored only in session (not persistent)
-* SHAP visualizations may be computationally intensive for large datasets
-
----
-
-## 📅 Future Improvements
-
-* Integrate real-time database (PostgreSQL / Firebase)
-* Implement authentication for personalized dashboards
-* Expand into other financial services (e.g., insurance approvals)
-* Add API endpoints for third-party integration
+1.  **Data Preprocessing:**
+    *   Encoding categorical variables (`OneHotEncoder`)
+    *   Feature scaling (`StandardScaler`)
+2.  **Model Training:**
+    *   **Credit & Loan Models:** Trained using `XGBClassifier` for high accuracy.
+3.  **Explainability:**
+    *   **SHAP (SHapley Additive exPlanations):** Used to interpret model predictions and provide transparency.
+4.  **Model Serialization:**
+    *   Models saved as `.pkl` files using `joblib` for efficient loading.
 
 ---
 
@@ -185,15 +146,7 @@ The platform provides an intuitive web interface where users can input relevant 
 
 ## 📎 References
 
-* **Datasets:**
-
-  * Credit dataset: [Kaggle – Credit Card Approval Data](https://www.kaggle.com/datasets/samuelcortinhas/credit-card-approval-clean-data)
-  * Loan dataset: [Kaggle – Loan Approval Prediction Data](https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset)
-* **Libraries:** scikit-learn, xgboost, shap, pandas, numpy
-* **Deployment:** [Streamlit Documentation](https://docs.streamlit.io/)
-
----
-
-## 🌐 Live Demo
-
-👉 Try the app here: [https://approvio.streamlit.app/](https://approvio.streamlit.app/)
+*   **Datasets:**
+    *   [Kaggle – Credit Card Approval Data](https://www.kaggle.com/datasets/samuelcortinhas/credit-card-approval-clean-data)
+    *   [Kaggle – Loan Approval Prediction Data](https://www.kaggle.com/datasets/architsharma01/loan-approval-prediction-dataset)
+*   **Tools:** React, FastAPI, Streamlit, Scikit-learn, XGBoost
